@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<!-- Coding By CodingNepal - codingnepalweb.com -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Login & Registration Form</title>
+  <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <div class="login form">
+      <header>Login</header>
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class=" message is-danger">{{ messages[0] }}</div>
+        {% endif %}
+      {% endwith %}
+      <form method="POST" action="/login">
+        <input type="email" name='email' placeholder="Enter your email" required>
+        <input type="password" name="password" placeholder="Enter your password" required>
+        <button type="submit" class="button" value="Login">Login</button>
+      </form>
+      <div class="signup">
+        <span class="signup">Don't have an account?
+        <a href="/signup">Signup</a> 
+        </span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

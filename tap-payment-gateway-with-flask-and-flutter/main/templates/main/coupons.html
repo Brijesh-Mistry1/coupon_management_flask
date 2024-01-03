@@ -1,0 +1,119 @@
+{% extends "main/base.html" %}
+{% block content %}
+<nav>
+  <i class='bx bx-menu' style="margin-right: auto;"></i>
+  <!-- <input type="checkbox" id="switch-mode" hidden>
+  <label for="switch-mode" class="switch-mode"></label> -->
+  <span>{{name}}</span>
+</nav>
+
+<main id="coupons-page">
+    <div class="head-title">
+        <div class="left">
+            <h1>Coupons</h1>
+        </div>
+    </div>
+    {% if error %}
+      <div class="left">
+        <p style="color:red;">{{error}}</p>
+      </div>
+    {% endif %}
+    <div style="width: fit-content; margin-top: 15px;">
+      <form method="POST" action="/api/coupon_create">
+        <label for="to-date">Expire on: </label>
+        <input type="date" class="date" name="to-date" id="to-date" placeholder="Select a date..." required>
+        <input type="text" class="Quantity-input" name="quantity" id="quantity" placeholder="Enter Quantity..." required>
+        <button id="generate-coupon" class="button submit">Generate</button>
+      </form>
+    </div>
+    <div class="cou-container">
+      <div class="row justify-content-center" id="coupon-container">
+      </div>
+    </div>
+  </main>
+{% endblock %}
+{% block script %}
+<script>
+  ele = document.getElementById('menu-coupons');
+  ele.classList.add('active')
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('to-date').setAttribute('min', today);
+
+  $(document).ready(function () {
+    $('#quantity').on('input', function () {
+      $(this).val($(this).val().replace(/\D/g, ''));
+    });
+  });
+
+  function fetchCouponsData() {
+    $.ajax({
+      url: '/dashboard/api/coupons_data',
+      traditional: true,
+      type: 'GET',
+      success: function (data) {
+        $('#coupon-container').empty(); // Use the class selector
+        if (data.length > 0) {
+          var couponContainer = $('#coupon-container'); // Use the class selector
+          couponContainer.empty();
+          $.each(data, function (index, coupon) { // Specify the array 'data'
+              // Create a coupon card within the row
+              var currentDate = new Date();
+              var validToDate = new Date(coupon.valid_to)
+              validToDate.setHours(23, 59, 59, 999);
+              if ((validToDate > currentDate) && (coupon.quantity > 0)){
+                var couponCard = `
+                    <div class="col-md-3 col-sm-6 responsive-block" style="margin-top: 15px; min-width:250px">
+                      <div class="coupon-card">
+                        <!-- <img src="" class="logo"> -->
+                        <h3>Get 1 Exam free<br>using Coupon Code:</h3>
+                        <div class="coupon-row">
+                          <span id="cpnCode">${coupon.coupon_code}</span>
+                          <span id="cpnBtn-${coupon.coupon_code}" class="cpnBtn" onclick="copyCoupon('${coupon.coupon_code}')">Copy Code</span>
+                        </div>
+                        <p>Coupon Usage : ${coupon.usage_total}</p>
+                        <p>Coupon Quantity : ${coupon.quantity}</p>
+                        <div><p>Valid till : ${coupon.valid_to}</p></div>
+                        <div class="circle1"></div>
+                        <div class="circle2"></div>
+                      </div>
+                `;
+                // Append the row to the coupon container
+                couponContainer.append(couponCard);
+              }
+              if((validToDate < currentDate) || (coupon.quantity < 1)){
+                var couponCard = `
+                    <div class="col-md-3 col-sm-6 responsive-block" style="margin-top: 15px; min-width:250px">
+                      <div class="coupon-card-black">
+                        <!-- <img src="" class="logo"> -->
+                        <h3>Get 1 Exam free<br>using Coupon Code:</h3>
+                        <div class="coupon-row">
+                          <span id="cpnCode">${coupon.coupon_code}</span>
+                          <span id="cpnBtn-${coupon.coupon_code}" class="cpnBtn" onclick="copyCoupon('${coupon.coupon_code}')">Copy Code</span>
+                        </div>
+                        <p>Coupon Usage : ${coupon.usage_total}</p>
+                        <p>Coupon Quantity : ${coupon.quantity}</p>
+                        <div><p>Valid till : ${coupon.valid_to}</p></div>
+                        <div class="circle1"></div>
+                        <div class="circle2"></div>
+                      </div>
+                `;
+                // Append the row to the coupon container
+                couponContainer.append(couponCard);
+              }
+          });
+        } else {
+          // No coupons available
+          $('.coupon-container').html('<p>No coupons available.</p>');
+        }
+      },
+      error: function () {
+        // Handle errors if the AJAX call fails
+        $('.coupon-card').html('<p>Failed to fetch coupons data.</p>');
+      }
+    });
+  }
+    $(window).on('load', function() {
+      fetchCouponsData()
+    })
+    </script>
+{% endblock %}

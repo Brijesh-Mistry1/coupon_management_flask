@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    command: ["flask", "run", "--host=0.0.0.0"]
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/tap-payment-gateway-with-flask-and-flutter
+    depends_on:
+      - db
+  db:
+    image: mongo:latest
+    hostname: db
+    environment:
+      - MONGO_INITDB_DATABASE=test_db
+    ports:
+      - "27018:27017"
+

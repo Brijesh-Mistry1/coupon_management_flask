@@ -1,0 +1,146 @@
+/*the complete project is in the following link:
+https://github.com/vkive/coupon-code.git
+Follow me on Codepen
+*/
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'poppins', sans-serif;
+    
+}
+
+
+
+.container {
+    width: 80%; /* Adjust the width to your desired size */
+    max-width: 500px; /* Add a max-width to prevent it from becoming too wide */
+    height: auto; /* Remove the fixed height to allow it to adjust to content */
+    background: #f0fff3;
+    display: flex;
+    flex-direction: column; /* Adjust container to column layout */
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto; /* Center the container horizontally */
+    padding: 20px; /* Adjust the padding as needed */
+    border-radius: 15px;
+    box-shadow: 0 10px 10px 0 rgba(0, 0, 0, 0.15);
+    position: relative;
+}
+.coupon-card{
+    background: linear-gradient(135deg, #7158fe, #9d4de6);
+    color: #fff;
+    text-align: center;
+    font-size: center;
+    padding:  20px 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 10px 0 rgba(0,0,0,0.15);
+    position: relative;
+
+}
+.coupon-card-black{
+    background: linear-gradient(135deg, #adacb6, #3a3a3b);
+    color: #fff;
+    text-align: center;
+    font-size: center;
+    padding:  20px 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 10px 0 rgba(0,0,0,0.15);
+    position: relative;
+
+}
+.coupon-card-black h3{
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 40px;
+
+}
+.coupon-card-black p{
+    font-size: 14px;
+
+}
+/*  */
+
+.responsoive-block{
+    min-width: 350px !important;
+}
+.logo{
+    width: 80px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+
+}
+.coupon-card h3{
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 40px;
+
+}
+.coupon-card p{
+    font-size: 14px;
+
+}
+
+.coupon-row {
+    display: flex;
+    align-items: center;
+    margin: 25px auto; /* Adjust the margin as needed */
+    width:fit-content; /* Ensure the row takes the full width of the card */
+}
+
+#cpnCode{
+    border: 1px dashed #fff;
+    padding: 10px 10px;
+    border-right: 0;
+    max-width: 200px;
+}
+.cpnBtn{
+    border: 1px solid #fff;
+    background: #fff;
+    padding: 10px 6px;
+    color: #7158fe;
+    cursor: pointer;
+    /* margin-right: 50px;  */
+}
+
+.circle1, .circle2{
+    background: #f0fff3;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+
+}
+.circle1{
+    left: -25px;
+}
+.circle2{
+    right: -25px;
+}
+ /* Style for the search input */
+ .js-search {
+    display: none; /* Initially hidden */
+    padding: 5px; /* Adjust the padding as needed */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100px; /* Adjust the width as needed */
+    height: 30px; /* Adjust the height as needed */
+    /* Add some spacing between the icon and input */
+    outline: none;
+    transition: width 0.3s; /* Add a smooth transition effect */
+}
+
+/* Style for the search icon */
+.bx-search {
+    cursor: pointer;
+    /* padding-left: 280px; */
+    font-size: 16px;
+}
+
+/* Style for the input when it's visible */
+.js-search.visible {
+    display: inline-block;
+    width: 200px; /* Adjust the expanded width as needed */
+}

@@ -1,0 +1,566 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+<nav>
+  <i class='bx bx-menu' style="margin-right: auto;"></i>
+  <!-- <input type="checkbox" id="switch-mode" hidden>
+  <label for="switch-mode" class="switch-mode"></label> -->
+  <span>{{name}}</span>
+</nav>
+<!-- NAVBAR -->
+
+<!-- MAIN -->
+<main id="reports-page">
+  <div class="head-title">
+      <div class="left">
+          <h1>Reports</h1>
+      </div>
+  </div>
+
+  <ul class="box-info" style="padding-left:0;">
+      <li>
+          <i class='bx bxs-dollar-circle' ></i>
+          <span class="text">
+              <h3>{{total_payment}}</h3>
+              <p>Total Payment</p>
+          </span>
+      </li>
+      <li>
+        <i class='bx bxs-calendar-check' ></i>
+        <span class="text">
+            <h3>{{coupon_use_count}}</h3>
+            <p>Coupons Usage</p>
+        </span>
+    </li>
+  </ul>
+
+
+  <div class="table-data">
+    <div style="flex-grow: 1;">
+        <div id="payment-page" class="order">
+            <div class="head">
+                <div>
+                <h3>Recent Payments</h3>
+                <h6 id="payment-count" style="font-size: 0.8rem;"></h6>
+                </div>
+            <div style="margin-left: auto;">
+                <input id = searchInput placeholder='Search...' class='js-search' type="text" style="padding: 10px;width: 70%;">
+                <i class='bx bx-search' id="searchIcon" style="font-size: 1.2em;"></i>
+                <i class='bx bx-filter' id="payment-filters" style="margin-left: auto; font-size: 1.5em;"></i>
+                <i id="payment-bar" class='bx bx-bar-chart-alt-2' style="font-size: 1.5em;"></i>
+            </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Payment Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="payment-table">
+                </tbody>
+            </table>
+            <div class="pagination-container xsmall" style="display: flex; justify-content: center; margin-top: 10px;">
+                <div class="pagination">
+                    <ul id="payment-pagination-list" style="padding-left: 0;">
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="payment-bar-page" class="order" style="display: none; flex-grow: 1;">
+            <div class="head">
+                <div>
+                    <h3>Payment Analysis</h3>
+                </div>
+                <i class='bx bx-table' id="payment-table-icon" style="font-size: 1.5em; margin-left: auto;"></i>
+            </div>
+            <div style="float: right;">
+                <p class="font-weight-bold" >Select Year</p>
+                <select name="payment-chart-year" id="payment-chart-year" onchange="createPaymentBarChart()">
+                </select>
+            </div>
+            <canvas id="payment-bar-chart" class="chart-canvas"></canvas>
+        </div>
+    </div>
+    <div style="flex-grow: 1;">
+        <div id="usage-page" class="order">
+            <div class="head">
+                <div>
+                    <h3>Recent Coupon Usage</h3>
+                    <h6 id="coupon-usage-count" style="font-size: 0.8rem;"></h6>
+                </div>
+                <div style="margin-left: auto;">
+                    <input id="searchCouponInput" placeholder='Search...' class='js-search' type="text" style="padding: 10px;width: 70%;">
+                    <i class='bx bx-search' id="searchCouponIcon" style="font-size: 1.2em;"></i>
+                    <i class='bx bx-filter' id="coupon-usage-filters" style="margin-left: auto; font-size: 1.5em;"></i>
+                    <i id="usage-bar" class='bx bx-bar-chart-alt-2' style="font-size: 1.5em;"></i>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Usage Date</th>
+                        <th>Coupon</th>
+                    </tr>
+                </thead>
+                <tbody id="coupon-usage-table">
+                </tbody>
+            </table>
+            <div class="pagination-container xsmall" style="display: flex; justify-content: center; margin-top: 10px;">
+                <div class="pagination">
+                    <ul id="coupon-usage-pagination-list" style="padding-left: 0;">
+                    </ul>
+                </div>
+            </div>
+        </div>
+            <div id="usage-bar-page" class="order" style="display: none; flex-grow: 1;">
+                <div class="head">
+                    <div>
+                        <h3>Coupon Usage Analysis</h3>
+                    </div>
+                    <i class='bx bx-table' id="usage-table" style="font-size: 1.5em; margin-left: auto;"></i>
+                </div>
+                <div style="float: right;">
+                    <p class="font-weight-bold" >Select Year</p>
+                    <select name="usage-chart-year" id="usage-chart-year" onchange="createUsageBarChart()">
+                    </select>
+                </div>
+                <canvas id="usage-bar-chart" class="chart-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar" id="payment-filter-sidebar">
+    <!-- Filter content goes here -->
+        <div style="padding: 10px;">
+            <div style="display: flex;align-items: center;">
+                <h5 style="margin-bottom: 0;">Payment Filters</h5>
+                <i class='bx bx-x' id="close-payment-filters" style="margin-left: auto; font-size: 2em;"></i>
+            </div>
+            <hr>
+            <div>
+                <div style="margin-bottom: 10px;">
+                    <p class="font-weight-bold">Payment Date</p>
+                    <div style="display: flex; margin-left: 15px; width: 91%;">
+                        <div class="col-md-4 mb-1" data-select2-id="32" style="margin-right: 5px;">
+                            <span>Year</span>
+                            <div class="select-filters">
+                                <select class="" name="year-filter" id="year-filter" >
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-1" data-select2-id="32" style="margin-right: 5px;">
+                            <span>Month</span>
+                            <div class="select-filters">
+                                <select class="" name="month-filter" id="month-filter"  disabled>
+                                    <option value="">Select</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-1" data-select2-id="32" style="margin-right: 5px;">
+                            <span>Date</span>
+                            <div class="select-filters">
+                                <select class="" name="date-filter" id="date-filter" disabled>
+                                    <option value="">Select</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <p class="font-weight-bold">Status</p>
+                    <div style=" margin-left: 15px;">
+                        <div class="col-md-12 mb-1" data-select2-id="32">
+                            <div class="select-filters">
+                                <select name="status-filter" id="status-filter" >
+                                    <option value="">Select</option>
+                                    <option value="Success">Success</option>
+                                    <option value="Failed">Failed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <button onclick="get_payments_data()" style="height: 50px;">Apply Filters</button>
+            </div>
+            <div>
+                <button onclick="clearFilter('payment-filter-sidebar')" style="background-color: dimgrey; height: 50px;">Clear Filters</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar" id="coupon-usage-filter-sidebar">
+        <!-- Filter content goes here -->
+        <div style="padding: 10px;">
+            <div style="display: flex;align-items: center;">
+                <h5 style="margin-bottom: 0;">Coupon Usage Filters</h5>
+                <i class='bx bx-x' id="close-usage-filters" style="margin-left: auto; font-size: 2em;"></i>
+            </div>
+            <hr>
+            <div>
+                <div style="margin-bottom: 10px;">
+                    <p class="font-weight-bold">Usage Date</p>
+                    <div style="display: flex; margin-left: 15px; width: 91%;">
+                        <div class="col-md-4 mb-1" data-select2-id="32" style="margin-right: 5px;">
+                            <span>Year</span>
+                            <div class="select-filters">
+                                <select class="" name="usage-year-filter" id="usage-year-filter" >
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-1" data-select2-id="32" style="margin-right: 5px;">
+                            <span>Month</span>
+                            <div class="select-filters">
+                                <select class="" name="usage-month-filter" id="usage-month-filter"  disabled>
+                                    <option value="">Select</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-1" data-select2-id="32" style="margin-right: 5px;">
+                            <span>Date</span>
+                            <div class="select-filters">
+                                <select class="" name="usage-date-filter" id="usage-date-filter" disabled>
+                                    <option value="">Select</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <p class="font-weight-bold">Coupon</p>
+                    <div style="margin-left: 15px;">
+                        <div class="col-md-12 mb-1" data-select2-id="32">
+                            <div class="select-filters">
+                                <select name="coupon-filter" id="coupon-filter" >
+                                    <option value="">Select</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <button onclick="get_coupons_usage_data()" style="height: 50px;">Apply Filters</button>
+            </div>
+            <div>
+                <button onclick="clearFilter('coupon-usage-filter-sidebar')" style="background-color: dimgrey; height: 50px;">Clear Filters</button>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+{% block script %}
+<script>
+    ele = document.getElementById('menu-reports');
+    ele.classList.add('active')
+    $(window).on('load', function() {
+        get_payments_data(null)
+        get_payments_filters()
+        get_coupons_usage_data(null)
+        get_coupons_usage_filters()
+    })
+
+    function clearFilter(sidebarId) {
+        const filterSidebar = document.getElementById(sidebarId);
+        const selectFields = filterSidebar.querySelectorAll('select');
+        selectFields.forEach(function(select) {
+            $('#'+select.id).val(null).trigger('change'); // Reset the select field to the first option
+        });
+        if (sidebarId == 'payment-filter-sidebar'){
+            get_payments_data(null)
+        }else{
+            get_coupons_usage_data(null)
+        }
+    }
+
+    $(document).ready(function() {
+        $('select').select2();
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        var paymentFilterIcon = document.getElementById("payment-filters");
+        var paymentFilterSidebar = document.getElementById("payment-filter-sidebar");
+
+        var usageFilterIcon = document.getElementById("coupon-usage-filters");
+        var usageFilterSidebar = document.getElementById("coupon-usage-filter-sidebar");
+
+        var payClose = document.getElementById("close-payment-filters");
+        var usageClose = document.getElementById("close-usage-filters");
+
+        paymentFilterIcon.addEventListener("click", function() {
+            if (paymentFilterSidebar.style.right === "0px") {
+                paymentFilterSidebar.style.right = "-300px"; // Hide the sidebar
+                document.getElementsByClassName('table-data')[0].style.width = '100%'
+            } else {
+                paymentFilterSidebar.style.right = "0px"; // Show the sidebar
+                document.getElementsByClassName('table-data')[0].style.width = '80%'
+            }
+            if (usageFilterSidebar.style.right === "0px") {
+                usageFilterSidebar.style.right = "-300px"; // Hide the sidebar
+            }
+        });
+
+        usageFilterIcon.addEventListener("click", function() {
+            if (usageFilterSidebar.style.right === "0px") {
+                usageFilterSidebar.style.right = "-300px"; // Hide the sidebar
+                document.getElementsByClassName('table-data')[0].style.width = '100%'
+            } else {
+                usageFilterSidebar.style.right = "0px"; // Show the sidebar
+                document.getElementsByClassName('table-data')[0].style.width = '80%'
+            }
+            if (paymentFilterSidebar.style.right === "0px") {
+                paymentFilterSidebar.style.right = "-300px"; // Hide the sidebar
+            }
+        });
+
+        payClose.addEventListener("click", function(event) {
+        document.getElementsByClassName('table-data')[0].style.width = '100%'
+        if (event.target !== paymentFilterIcon && event.target !== paymentFilterSidebar) {
+            paymentFilterSidebar.style.right = "-300px"; // Hide the sidebar
+        }
+        if (event.target !== usageFilterIcon && event.target !== usageFilterSidebar) {
+            usageFilterSidebar.style.right = "-300px"; // Hide the sidebar
+        }
+        });
+
+        usageClose.addEventListener("click", function(event) {
+        document.getElementsByClassName('table-data')[0].style.width = '100%'
+        if (event.target !== paymentFilterIcon && event.target !== paymentFilterSidebar) {
+            paymentFilterSidebar.style.right = "-300px"; // Hide the sidebar
+        }
+        if (event.target !== usageFilterIcon && event.target !== usageFilterSidebar) {
+            usageFilterSidebar.style.right = "-300px"; // Hide the sidebar
+        }
+        });
+
+        usageFilterSidebar.addEventListener("click", function(event) {
+            event.stopPropagation();
+        });
+        paymentFilterSidebar.addEventListener("click", function(event) {
+            event.stopPropagation();
+        });
+        const searchCouponIcon = document.getElementById('searchCouponIcon');
+        const searchCouponInput = document.getElementById('searchCouponInput');
+        searchCouponInput.style.display = 'none';
+        searchCouponIcon.addEventListener('click', function (event) {
+            event.stopPropagation();
+            searchCouponInput.style.display = 'inline-block';
+            searchCouponInput.focus();
+        });
+        searchCouponInput.addEventListener('click', function (event) {
+        });
+        searchCouponInput.addEventListener('input', function () {
+            get_coupons_usage_data();
+        });
+        const searchIcon = document.getElementById('searchIcon');
+        const searchInput = document.getElementById('searchInput');
+        searchInput.style.display = 'none';
+        searchIcon.addEventListener('click', function (event) {
+            event.stopPropagation();
+            searchInput.style.display = 'inline-block';
+            searchInput.focus();
+        });
+        searchInput.addEventListener('click', function (event) {
+        });
+        searchInput.addEventListener('input', function () {
+            get_payments_data();
+        });
+
+        const usageBar = document.getElementById('usage-bar');
+        const usageTable = document.getElementById('usage-table');
+        const usagePage = document.getElementById('usage-page');
+        const usageBarPage = document.getElementById('usage-bar-page');
+
+        const paymentBar = document.getElementById('payment-bar');
+        const paymentTable = document.getElementById('payment-table-icon');
+        const paymentPage = document.getElementById('payment-page');
+        const paymentBarPage = document.getElementById('payment-bar-page');
+
+        usageBar.addEventListener('click', function () {
+            usagePage.style.display = 'none';
+            usageBarPage.style.display = 'block';
+            ele = $('#usage-chart-year')
+            ele.empty()
+            for (i=0;i<couYearsList.length;i++){
+                ele.append(`<option value='${couYearsList[i]}'>${couYearsList[i]}</option>`)
+            }
+            createUsageBarChart()
+        })
+
+        usageTable.addEventListener('click', function () {
+            usagePage.style.display = 'block';
+            usageBarPage.style.display = 'none';
+        })
+
+        paymentBar.addEventListener('click', function () {
+            paymentPage.style.display = 'none';
+            paymentBarPage.style.display = 'block';
+            ele = $('#payment-chart-year')
+            ele.empty()
+            for (i=0;i<yearsList.length;i++){
+                ele.append(`<option value='${yearsList[i]}'>${yearsList[i]}</option>`)
+            }
+            createPaymentBarChart()
+        })
+
+        paymentTable.addEventListener('click', function () {
+            paymentPage.style.display = 'block';
+            paymentBarPage.style.display = 'none';
+        })
+    });
+
+    function get_payments_data(page){
+        var username = $("#searchInput").val();
+        if (page == null){
+        }
+        date = $('#date-filter').val()
+        month = $('#month-filter').val()
+        year = $('#year-filter').val()
+        status = $('#status-filter').val()
+        filters = '&'
+        if (date){
+            filters = filters + 'date=' + date + '&month=' + month + '&year=' + year
+        }else if(month){
+            filters = filters + 'month=' + month + '&year=' + year
+        }else if(year){
+            filters  = filters + 'year=' + year
+        }
+        if (status){
+            filters  = filters + '&status=' + status
+        }
+        if (username) {
+            filters  = filters + 'username=' + username
+        }
+        $.ajax({
+            url: '/dashboard/api/payments_data?page_data=payment&page='+page + filters,
+            traditional: true,
+            type: 'GET',
+            success: function (msg) {
+                var tableBody = $('#payment-table')[0]
+                var paginationList = $('#payment-pagination-list')
+                data = msg['data']
+                currentPage = msg['page']
+                maxPage = msg['total_pages']
+                $('#payment-count').text(msg['count']+' record(s) of payment found.')
+                $('#payment-table').empty()
+                if (data.length > 0) {
+                    $.each(data, function(index, payment) {
+                        var row = $('<tr>');
+                        row.append($('<td>').html(`<p>${payment.username}</p>`));
+                        row.append($('<td>').text(payment.date));
+                        row.append($('<td>').text(payment.amount));
+                        if (payment.status){
+                            row.append($('<td>').html(`<i class='bx bxs-check-circle' style="color: #005f00;"></i>`));
+                        }else{
+                            row.append($('<td>').html(`<i class='bx bxs-x-circle' style="color: #be0000;"></i>`));
+                        }
+                        tableBody.append(row[0]);
+                });
+                } else {
+                    var noDataMessage = $('<tr>');
+                    noDataMessage.append($('<td>').attr('colspan', 3).text('No Payment history found!'));
+                    tableBody.append(noDataMessage[0]);
+                }
+                paginationList.empty();
+
+                if (currentPage > 1) {
+                    prev_page = parseInt(currentPage)-1
+                    paginationList.append('<li class="page"><div onclick=get_payments_data('+prev_page+') ><svg xmlns="http://www.w3.org/2000/svg" width="28" height="35" viewBox="0 0 24 24" fill="none" stroke="#3C91E6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-left" style="height: 40px; width: 40px;"><polyline points="18 17 13 12 18 7"></polyline></svg></li>');
+                }
+                else {
+                    paginationList.append('<li class="page"><div><svg xmlns="http://www.w3.org/2000/svg" width="28" height="35" viewBox="0 0 24 24" fill="none" stroke="#3C91E6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-left" style="height: 40px; width: 40px;"><polyline points="18 17 13 12 18 7"></polyline></svg></li>');
+                }
+
+                paginationList.append('<li class="page"><a class="page-link" href="javascript:void(0);">'+currentPage+'</a></li>');
+
+                if (currentPage <= maxPage-1) {
+                    next_page = parseInt(currentPage)+1
+                    paginationList.append('<li class="page"><div onclick=get_payments_data('+ next_page  +') ><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3C91E6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-right" style="height: 40px;width: 40px;"><polyline points="6 17 11 12 6 7"></polyline></svg></div></li>');
+                }
+                else{
+                    paginationList.append('<li class="page"><div><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3C91E6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-right" style="height: 40px;width: 40px;"><polyline points="6 17 11 12 6 7"></polyline></svg></div></li>');
+                }
+            }
+        })
+    }
+
+    function get_coupons_usage_data(page){
+        if (page == null){
+            page = 1
+        }
+        var username = $("#searchCouponInput").val();
+        date = $('#usage-date-filter').val()
+        month = $('#usage-month-filter').val()
+        year = $('#usage-year-filter').val()
+        coupon = $('#coupon-filter').val()
+
+        filters = '&'
+        if (date){
+            filters = filters + 'date=' + date + '&month=' + month + '&year=' + year
+        }else if(month){
+            filters = filters + 'month=' + month + '&year=' + year
+        }else if(year){
+            filters  = filters + 'year=' + year
+        }
+        if (coupon){
+            filters  = filters + '&coupon=' + coupon
+        }
+        if (username) {
+            filters  = filters + 'username=' + username
+        }
+        $.ajax({
+            url: '/dashboard/api/coupons_usage_data?page_data=coupons_usage&page='+page + filters,
+            traditional: true,
+            // data: {'page_data':'coupons_usage','page':page},
+            type: 'GET',
+            success: function (msg) {
+                var tableBody = $('#coupon-usage-table')[0]
+                var paginationList = $('#coupon-usage-pagination-list')
+                data = msg['data']
+                currentPage = msg['page']
+                maxPage = msg['total_pages']
+                $('#coupon-usage-count').text(msg['count']+' record(s) of coupon usage found.')
+                $('#coupon-usage-table').empty()
+                if (data.length > 0) {
+                    $.each(data, function(index, usage) {
+                        var row = $('<tr>');
+                        row.append($('<td>').html(`<p>${usage.username}</p>`));
+                        row.append($('<td>').text(usage.date));
+                        row.append($('<td>').text(usage.coupon_code));
+                        tableBody.append(row[0]);
+                });
+                } else {
+                    var noDataMessage = $('<tr>');
+                    noDataMessage.append($('<td>').attr('colspan', 3).text('There are no coupon usage history!'));
+                    tableBody.append(noDataMessage[0]);
+                }
+                paginationList.empty();
+
+                if (currentPage > 1) {
+                    prev_page = parseInt(currentPage)-1
+                    paginationList.append('<li class="page"><div onclick=get_coupons_usage_data('+prev_page+') ><svg xmlns="http://www.w3.org/2000/svg" width="28" height="35" viewBox="0 0 24 24" fill="none" stroke="#3C91E6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-left" style="height: 40px; width: 40px;"><polyline points="18 17 13 12 18 7"></polyline></svg></li>');
+                }else{
+                    paginationList.append('<li class="page"><div><svg xmlns="http://www.w3.org/2000/svg" width="28" height="35" viewBox="0 0 24 24" fill="none" stroke="#3C91E6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-left" style="height: 40px; width: 40px;"><polyline points="18 17 13 12 18 7"></polyline></svg></li>');
+                }
+
+                paginationList.append('<li class="page"><a class="page-link" href="javascript:void(0);">'+currentPage+'</a></li>');
+                if (currentPage <= maxPage-1) {
+                    next_page = parseInt(currentPage)+1
+                    paginationList.append('<li class="page"><div onclick=get_coupons_usage_data('+next_page+') ><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3C91E6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-right" style="height: 40px;width: 40px;"><polyline points="6 17 11 12 6 7"></polyline></svg></div></li>');
+                }else{
+                    paginationList.append('<li class="page"><div><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3C91E6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-right" style="height: 40px;width: 40px;"><polyline points="6 17 11 12 6 7"></polyline></svg></div></li>');
+                }
+            }
+        })
+
+    }
+</script>
+
+{% endblock %}
